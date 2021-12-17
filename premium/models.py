@@ -1,9 +1,15 @@
 from django.db import models
-import uuid
+import time
 from django.contrib.auth.models import User
 
 
 # Create your models here.
+def paymentId():
+    prefix = "PID"
+    timestamp = str(int(time.time() * 10000000))
+    default_value = prefix + timestamp
+    return (default_value)
+
 
 class Payment(models.Model):
     payment_choices = [
@@ -26,9 +32,12 @@ class Payment(models.Model):
         ("mobilemoneytanzania", "mobilemoneytanzania")
     ]
     currency_choices = [('KES', 'KES'), ('USD', 'USD')]
-    trx_ref = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    currency = models.ForeignKey('Currency', on_delete=models.PROTECT)
+    tx_ref = models.CharField(max_length=256, blank=False, null=False, default=paymentId)
     amount = models.IntegerField(blank=True, null=True)
+    currency = models.ForeignKey('Currency', on_delete=models.PROTECT)
+    redirect_url = models.CharField(default="https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
+                                    max_length=100)
+    payment_options = models.CharField(choices=payment_choices, max_length=32)
     phoneNumber = models.BigIntegerField()
     payment_options = models.CharField(choices=payment_choices, max_length=32)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
