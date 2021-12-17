@@ -27,7 +27,7 @@ class Payment(models.Model):
     ]
     currency_choices = [('KES', 'KES'), ('USD', 'USD')]
     trx_ref = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    currency = models.ForeignKey('Currency',on_delete=models.PROTECT)
+    currency = models.ForeignKey('Currency', on_delete=models.PROTECT)
     amount = models.IntegerField(blank=True, null=True)
     phoneNumber = models.BigIntegerField()
     payment_options = models.CharField(choices=payment_choices, max_length=32)
@@ -35,5 +35,7 @@ class Payment(models.Model):
 
 
 class Currency(models.Model):
-    id = models.IntegerField(primary_key=True, null=False)
     code = models.CharField(max_length=3)
+
+    def __str__(self):
+        return str(self.code)
